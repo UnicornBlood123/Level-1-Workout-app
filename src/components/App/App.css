@@ -1,0 +1,15 @@
+.site-layout-content {
+  min-width: 600px;
+  max-width: 700px;
+  min-height: 100%;
+  padding: 24px;
+  margin: auto;
+  background-color: white;
+  font-size: 24px;
+}
+
+.layout{
+  overflow: auto;
+  width: 100vw;
+  height: 100vh;
+}
