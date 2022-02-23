@@ -7,7 +7,7 @@ import WorkoutList from '../WorkoutList/WorkoutList';
 import { Route, Routes } from 'react-router';
 import { Paths } from '../../contents/routes';
 import CompletePage from '../CompletePage/CompletePage';
-import ExerciseContainer from '../../containers/Exercise/ExerciseContainer';
+import Exercise from '../Exercise/Exercise';
 
 const { Content } = Layout;
 
@@ -18,7 +18,7 @@ const App = observer(() => {
         <div className="site-layout-content">
           <Routes>
             <Route path={Paths.ROOT} element={<WorkoutList />} />
-            <Route path={Paths.EXERCISE_ID} element={<ExerciseContainer />} />
+            <Route path={Paths.EXERCISE_ID} element={<Exercise />} />
             <Route path={Paths.COMPLETE} element={<CompletePage />} />
           </Routes>
         </div>

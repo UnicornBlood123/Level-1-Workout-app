@@ -1,34 +1,43 @@
 import { Paths } from '../../contents/routes';
 import { CheckOutlined } from '@ant-design/icons/lib';
-import { Button } from 'antd';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import './CompletePage.css';
-import Workout from '../../store/workout';
+import { useStore } from '../../index';
+import { Button } from 'antd';
+import styled from 'styled-components';
 
-const CompletePage = ({ workout }: { workout: Workout }) => {
+const CompletePage = () => {
   const navigate = useNavigate();
+  const workout = useStore();
+
+  const StyledCheckOutlined = styled(CheckOutlined)`
+    color: #1de9b6;
+    font-size: 70px;
+  `;
+  const StyledButton = styled(Button)`
+    width: 100%;
+    background-color: #aa00ff;
+    color: white;
+    border-radius: 8px;
+  `;
 
   return (
-    <div className={'completePage'}>
-      <CheckOutlined style={{ color: '#1DE9B6', fontSize: '80px' }} />
+    <div
+      style={{
+        paddingTop: '30px',
+        textAlign: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      <StyledCheckOutlined />
       <h1>Workout completed!</h1>
       <p>Nice job. You’re done. Here’s the workout summary.</p>
       <p>
         Minutes
         <br /> <b>{(workout.workoutTime / 60).toFixed(1)}</b>
       </p>
-      <Button
-        onClick={() => navigate(Paths.ROOT)}
-        style={{
-          width: '100%',
-          backgroundColor: '#AA00FF',
-          color: 'white',
-          borderRadius: '8px',
-        }}
-      >
-        Save & Continue
-      </Button>
+      <StyledButton onClick={() => navigate(Paths.ROOT)}>Save & Continue</StyledButton>
     </div>
   );
 };

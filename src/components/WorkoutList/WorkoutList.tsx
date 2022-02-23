@@ -1,35 +1,40 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import 'antd/dist/antd.min.css';
 import { observer } from 'mobx-react-lite';
-import { Avatar, Button, List, Image, Empty } from 'antd';
-import { WorkoutListProps } from './WorkoutList.interface';
+import { Avatar, Button, List, Image } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { Paths } from '../../contents/routes';
-import Workout from '../../store/workout';
-import CompletePage from '../CompletePage/CompletePage';
+import { useStore } from '../../index';
+import styled from 'styled-components';
+import { CheckOutlined } from '@ant-design/icons/lib';
 
-const WorkoutList = observer(({ workout }: WorkoutListProps) => {
+const WorkoutList = observer(() => {
+  const workout = useStore();
   const navigate = useNavigate();
+
+  const StyledButton = styled(Button)`
+    width: 100%;
+    position: sticky;
+    top: 95%;
+    left: 0;
+    z-index: 999;
+    background-color: #aa00ff;
+    color: white;
+    border-radius: 8px;
+  `;
+
+  const StyledList = styled(List)``;
+
   return (
     <>
-      <Button
+      <StyledButton
         onClick={() => {
           if (workout.isWorkoutDone) navigate(Paths.COMPLETE);
           else navigate(Paths.EXERCISE + workout.exerciseId);
         }}
-        style={{
-          width: '100%',
-          position: 'sticky',
-          top: '95%',
-          left: 0,
-          zIndex: 999,
-          backgroundColor: '#AA00FF',
-          color: 'white',
-          borderRadius: '8px',
-        }}
       >
         Start Workout
-      </Button>
+      </StyledButton>
       <Image
         preview={false}
         width={'100%'}
@@ -38,7 +43,7 @@ const WorkoutList = observer(({ workout }: WorkoutListProps) => {
       />
       <p>Day 1</p>
       <h1>Morning Flexibillity Routline</h1>
-      <p>Easy 15 min No equoment</p>
+      <p>Easy•15•min•No•equoment</p>
       <List
         style={{ paddingBottom: '20px' }}
         itemLayout="horizontal"

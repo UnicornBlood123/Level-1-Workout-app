@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import 'antd/dist/antd.min.css';
-import { ExerciseProps } from './Exercise.interface';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Progress } from 'antd';
 import './Exercise.css';
@@ -13,41 +12,44 @@ import {
 } from '@ant-design/icons/lib';
 import { Paths } from '../../contents/routes';
 import { observer } from 'mobx-react-lite';
+import { useStore } from '../../index';
+import styled from 'styled-components';
 
-const Exercise = ({ store }: ExerciseProps) => {
+const Exercise = () => {
+  const workout = useStore();
   const params = useParams();
   const navigate = useNavigate();
 
   const checkBorderArray = () => {
-    !store.data.questions[store.questionId]?.exercises?.findIndex(
+    !workout.data.questions[workout.questionId]?.exercises?.findIndex(
       (el) => el.id === Number(params?.id)
-    ) && !store.questionId
-      ? store.setPrevHidden(true)
-      : store.setPrevHidden(false);
+    ) && !workout.questionId
+      ? workout.setPrevHidden(true)
+      : workout.setPrevHidden(false);
 
-    store.data.questions[store.questionId]?.exercises?.findIndex(
+    workout.data.questions[workout.questionId]?.exercises?.findIndex(
       (el) => el.id === Number(params?.id)
     ) ===
-      store.data.questions[store.questionId]?.exercises.length - 1 &&
-    store.questionId === store.data.questions.length - 1
-      ? store.setNextHidden(true)
-      : store.setNextHidden(false);
+      workout.data.questions[workout.questionId]?.exercises.length - 1 &&
+    workout.questionId === workout.data.questions.length - 1
+      ? workout.setNextHidden(true)
+      : workout.setNextHidden(false);
   };
 
   const nextPage = () => {
     if (
-      store.data.questions[store.questionId]?.exercises?.findIndex(
+      workout.data.questions[workout.questionId]?.exercises?.findIndex(
         (el) => el.id === Number(params?.id)
       ) ===
-      store.data.questions[store.questionId]?.exercises.length - 1
+      workout.data.questions[workout.questionId]?.exercises.length - 1
     ) {
-      store.setQuestionId(store.questionId + 1);
-      navigate(Paths.EXERCISE + store.data.questions[store.questionId]?.exercises[0]?.id);
+      workout.setQuestionId(workout.questionId + 1);
+      navigate(Paths.EXERCISE + workout.data.questions[workout.questionId]?.exercises[0]?.id);
     } else {
       navigate(
         Paths.EXERCISE +
-          store.data.questions[store.questionId]?.exercises[
-            store.data.questions[store.questionId]?.exercises?.findIndex(
+          workout.data.questions[workout.questionId]?.exercises[
+            workout.data.questions[workout.questionId]?.exercises?.findIndex(
               (el) => el.id === Number(params?.id)
             ) + 1
           ].id
@@ -57,22 +59,22 @@ const Exercise = ({ store }: ExerciseProps) => {
 
   const prevPage = () => {
     if (
-      store.data.questions[store.questionId]?.exercises?.findIndex(
+      workout.data.questions[workout.questionId]?.exercises?.findIndex(
         (el) => el.id === Number(params?.id)
       ) === 0
     ) {
-      store.setQuestionId(store.questionId - 1);
+      workout.setQuestionId(workout.questionId - 1);
       navigate(
         Paths.EXERCISE +
-          store.data.questions[store.questionId]?.exercises[
-            store.data.questions[store.questionId]?.exercises.length - 1
+          workout.data.questions[workout.questionId]?.exercises[
+            workout.data.questions[workout.questionId]?.exercises.length - 1
           ]?.id
       );
     } else {
       navigate(
         Paths.EXERCISE +
-          store.data.questions[store.questionId]?.exercises[
-            store.data.questions[store.questionId]?.exercises?.findIndex(
+          workout.data.questions[workout.questionId]?.exercises[
+            workout.data.questions[workout.questionId]?.exercises?.findIndex(
               (el) => el.id === Number(params?.id)
             ) - 1
           ]?.id
@@ -81,86 +83,86 @@ const Exercise = ({ store }: ExerciseProps) => {
   };
 
   const checkWorkoutDone = () => {
-    const index = store.data.questions.findIndex((qu) =>
+    const index = workout.data.questions.findIndex((qu) =>
       qu.exercises.find((ex) => {
-        if (store.allTimers[ex.id] > 0 || store.allTimers[ex.id] === undefined) {
+        if (workout.allTimers[ex.id] > 0 || workout.allTimers[ex.id] === undefined) {
           return ex;
         }
       })
     );
-    if (index === -1) store.setIsWorkoutDone(true);
+    if (index === -1) workout.setIsWorkoutDone(true);
   };
 
   const playVideo = () => {
     const video = document.querySelector('video');
-    if (store.isPlay) video?.play();
+    if (workout.isPlay) video?.play();
     else video?.pause();
   };
 
   useEffect(() => {
-    store.data.questions.length && checkWorkoutDone();
+    workout.data.questions.length && checkWorkoutDone();
   });
 
   useEffect(() => {
     playVideo();
-  }, [store.isPlay]);
+  }, [workout.isPlay]);
 
   useEffect(() => {
-    if (store.data.questions.length > 0) {
-      store.setQuestionId(
-        store.data.questions.findIndex((qu) =>
+    if (workout.data.questions.length > 0) {
+      workout.setQuestionId(
+        workout.data.questions.findIndex((qu) =>
           qu.exercises.find((ex) => {
             if (ex.id === Number(params?.id)) {
-              store.setExerciseId(ex.id);
+              workout.setExerciseId(ex.id);
               return ex;
             }
           })
         )
       );
     }
-    if (store.questionId === -1) navigate(Paths.ROOT);
+    if (workout.questionId === -1) navigate(Paths.ROOT);
     checkBorderArray();
-    if (store.allTimers[store.exerciseId] === undefined) {
-      store.setCurrentTimer(
-        store.data.questions[store.questionId]?.exercises?.find(
+    if (workout.allTimers[workout.exerciseId] === undefined) {
+      workout.setCurrentTimer(
+        workout.data.questions[workout.questionId]?.exercises?.find(
           (el) => el.id === Number(params?.id)
         )?.duration ?? 0
       );
     } else {
-      if (params?.id) store.setCurrentTimer(store.allTimers[store.exerciseId]);
+      if (params?.id) workout.setCurrentTimer(workout.allTimers[workout.exerciseId]);
     }
-    if (store.currentTimer) {
-      store.setIsExerciseDone(false);
-      store.resetReadyTimer();
-      store.setIsReady(false);
-      store.setIsPlay(true);
+    if (workout.currentTimer) {
+      workout.setIsExerciseDone(false);
+      workout.resetReadyTimer();
+      workout.setIsReady(false);
+      workout.setIsPlay(true);
     } else {
-      store.setIsExerciseDone(true);
-      store.setIsReady(true);
+      workout.setIsExerciseDone(true);
+      workout.setIsReady(true);
     }
-  }, [store.data.questions, navigate]);
+  }, [workout.data.questions, navigate]);
 
   useEffect(() => {
-    if (!store.isExerciseDone) {
-      if (store.isReady) {
+    if (!workout.isExerciseDone) {
+      if (workout.isReady) {
         const interval = setInterval(() => {
-          if (store.isExerciseDone || !store.isPlay) {
+          if (workout.isExerciseDone || !workout.isPlay) {
             clearInterval(interval);
-            if (!store.currentTimer) store.setIsExerciseDone(true);
+            if (!workout.currentTimer) workout.setIsExerciseDone(true);
           } else {
-            store.decreaseExerciseTimer();
+            workout.decreaseExerciseTimer();
           }
-          store.allTimers[store.exerciseId] = store.currentTimer;
+          workout.allTimers[workout.exerciseId] = workout.currentTimer;
         }, 1000);
         return () => {
           clearInterval(interval);
         };
       } else {
         const readyInterval = setInterval(() => {
-          if (store.isReady) {
+          if (workout.isReady) {
             clearInterval(readyInterval);
           } else {
-            store.decreaseReadyTimer();
+            workout.decreaseReadyTimer();
           }
         }, 1000);
         return () => {
@@ -168,16 +170,16 @@ const Exercise = ({ store }: ExerciseProps) => {
         };
       }
     }
-  }, [store.isReady, store.isPlay]);
+  }, [workout.isReady, workout.isPlay]);
 
   useEffect(() => {
-    if (!store.isExerciseDone) {
-      if (store.isPlay) {
+    if (!workout.isExerciseDone) {
+      if (workout.isPlay) {
         const interval = setInterval(() => {
-          if (store.isExerciseDone || !store.isPlay || store.isWorkoutDone) {
+          if (workout.isExerciseDone || !workout.isPlay || workout.isWorkoutDone) {
             clearInterval(interval);
           } else {
-            store.increaseTime();
+            workout.increaseTime();
           }
         }, 1000);
         return () => {
@@ -185,19 +187,73 @@ const Exercise = ({ store }: ExerciseProps) => {
         };
       }
     }
-  }, [store.isWorkoutDone, store.isPlay, navigate]);
+  }, [workout.isWorkoutDone, workout.isPlay, navigate]);
+
+  const SkipButton = styled(Button)`
+    width: 70px;
+    height: 45px;
+    padding: auto;
+    border-radius: 8px;
+    border-color: #aa00ff;
+  `;
+
+  const ReadyProgress = styled(Progress)`
+    &.ant-progress-circle .ant-progress-text {
+      color: #1de9b6;
+    }
+    &.ant-progress-circle.ant-progress-status-success .ant-progress-text {
+      color: #1de9b6;
+    }
+  `;
+
+  const TimerProgress = styled(Progress)`
+    &.ant-progress-circle .ant-progress-text {
+      color: #ff4081;
+    }
+    &.ant-progress-circle.ant-progress-status-success .ant-progress-text {
+      color: #1de9b6;
+    }
+  `;
+
+  const PlayButton = styled(Button)`
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    margin: 0;
+    background-color: '';
+  `;
+
+  const StepBackwardOutlinedStyled = styled(StepBackwardOutlined)`
+    font-size: 20px;
+    color: #aa00ff;
+  `;
+
+  const StepForwardOutlinedStyled = styled(StepForwardOutlined)`
+    font-size: 20px;
+    color: #aa00ff;
+  `;
+
+  const PlayCircleFilledStyled = styled(PlayCircleFilled)`
+    font-size: 48px;
+    color: #aa00ff;
+  `;
+
+  const PauseCircleFilledStyled = styled(PauseCircleFilled)`
+    font-size: 48px;
+    color: #aa00ff;
+  `;
 
   return (
     <>
-      {store.isWorkoutDone ? (
+      {workout.isWorkoutDone ? (
         navigate(Paths.COMPLETE)
       ) : (
         <div className={'exercise'}>
           <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(Paths.ROOT)} />
-          {store.isReady ? (
+          {workout.isReady ? (
             <h1>
               {
-                store.data.questions[store.questionId]?.exercises?.find(
+                workout.data.questions[workout.questionId]?.exercises?.find(
                   (el) => el.id === Number(params?.id)
                 )?.title
               }
@@ -206,66 +262,50 @@ const Exercise = ({ store }: ExerciseProps) => {
             <h1>Get Ready</h1>
           )}
           <div className={'menu-exercise'}>
-            <Button
+            <SkipButton
               onClick={prevPage}
               color={'#AA00FF'}
-              style={{
-                width: '70px',
-                height: '45px',
-                padding: 'auto',
-                borderRadius: '8px',
-                borderColor: '#AA00FF',
-              }}
-              disabled={store.prevHidden}
-              icon={<StepBackwardOutlined style={{ fontSize: '20px', color: '#AA00FF' }} />}
+              disabled={workout.prevHidden}
+              icon={<StepBackwardOutlinedStyled />}
             />
-            {store.isReady ? (
+            {workout.isReady ? (
               <>
-                <Progress
+                <TimerProgress
                   type="circle"
-                  status={store.currentTimer ? 'normal' : 'success'}
-                  strokeColor={store.isExerciseDone ? '#1de9b6' : '#FF4081'}
-                  style={{ color: '#FF4081' }}
+                  status={workout.currentTimer ? 'normal' : 'success'}
+                  strokeColor={workout.isExerciseDone ? '#1de9b6' : '#FF4081'}
                   percent={
                     100 -
-                    (store.currentTimer /
-                      (store.data.questions[store.questionId]?.exercises?.find(
+                    (workout.currentTimer /
+                      (workout.data.questions[workout.questionId]?.exercises?.find(
                         (el) => el.id === Number(params?.id)
                       )?.duration ?? 1)) *
                       100
                   }
                   format={() => {
-                    return store.currentTimer;
+                    return workout.currentTimer;
                   }}
                 />
               </>
             ) : (
               <>
-                <Progress
-                  style={{ color: '#1de9b6' }}
+                <ReadyProgress
                   strokeColor={'#1DE9B6'}
                   type="circle"
-                  percent={100 - (store.readyTimer / 5) * 100}
-                  format={() => store.readyTimer}
+                  percent={100 - (workout.readyTimer / 5) * 100}
+                  format={() => workout.readyTimer}
                 />
               </>
             )}
-            <Button
+            <SkipButton
               onClick={nextPage}
-              style={{
-                width: '70px',
-                height: '45px',
-                padding: 'auto',
-                borderRadius: '8px',
-                borderColor: '#AA00FF',
-              }}
-              disabled={store.nextHidden}
-              icon={<StepForwardOutlined style={{ fontSize: '20px', color: '#AA00FF' }} />}
+              disabled={workout.nextHidden}
+              icon={<StepForwardOutlinedStyled />}
             />
           </div>
           <video
             src={
-              store.data.questions[store.questionId]?.exercises?.find(
+              workout.data.questions[workout.questionId]?.exercises?.find(
                 (el) => el.id === Number(params?.id)
               )?.video
             }
@@ -275,24 +315,11 @@ const Exercise = ({ store }: ExerciseProps) => {
             width={'100%'}
           />
           <div className={'playButton-exercise'}>
-            <Button
-              onClick={store.onClickPlay}
-              hidden={!store.isReady}
+            <PlayButton
+              onClick={workout.onClickPlay}
+              hidden={!workout.isReady}
               shape={'circle'}
-              style={{
-                width: '50px',
-                height: '50px',
-                padding: 0,
-                margin: 0,
-                backgroundColor: '',
-              }}
-              icon={
-                store.isPlay ? (
-                  <PauseCircleFilled style={{ fontSize: '48px', color: '#AA00FF' }} />
-                ) : (
-                  <PlayCircleFilled style={{ fontSize: '48px', color: '#AA00FF' }} />
-                )
-              }
+              icon={workout.isPlay ? <PauseCircleFilledStyled /> : <PlayCircleFilledStyled />}
             />
           </div>
         </div>
@@ -301,30 +328,3 @@ const Exercise = ({ store }: ExerciseProps) => {
   );
 };
 export default observer(Exercise);
-
-// questions,
-//   currentTimer,
-//   setCurrentTimer,
-//   questionId,
-//   allTimers,
-//   onClickPlay,
-//   readyTimer,
-//   decreaseExerciseTimer,
-//   decreaseReadyTimer,
-//   increaseTime,
-//   resetReadyTimer,
-//   prevHidden,
-//   nextHidden,
-//   exerciseId,
-//   isWorkoutDone,
-//   isExerciseDone,
-//   isPlay,
-//   isReady,
-//   setQuestionId,
-//   setExerciseId,
-//   setPrevHidden,
-//   setNextHidden,
-//   setIsWorkoutDone,
-//   setIsExerciseDone,
-//   setIsPlay,
-//   setIsReady,
