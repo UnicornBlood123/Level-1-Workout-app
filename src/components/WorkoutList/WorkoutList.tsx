@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import { Paths } from '../../contents/routes';
 import { useStore } from '../../index';
 import styled from 'styled-components';
-import { CheckOutlined } from '@ant-design/icons/lib';
 
 const WorkoutList = observer(() => {
   const workout = useStore();
@@ -23,17 +22,16 @@ const WorkoutList = observer(() => {
     border-radius: 8px;
   `;
 
-  const StyledList = styled(List)``;
-
   return (
     <>
       <StyledButton
         onClick={() => {
+          workout.setIsWorkoutStart(true);
           if (workout.isWorkoutDone) navigate(Paths.COMPLETE);
           else navigate(Paths.EXERCISE + workout.exerciseId);
         }}
       >
-        Start Workout
+        {workout.isWorkoutStart ? 'Resume' : 'Start Workout'}
       </StyledButton>
       <Image
         preview={false}
@@ -43,24 +41,29 @@ const WorkoutList = observer(() => {
       />
       <p>Day 1</p>
       <h1>Morning Flexibillity Routline</h1>
-      <p>Easy•15•min•No•equoment</p>
+      <p>Easy • 15 min • No equipment</p>
       <List
         style={{ paddingBottom: '20px' }}
         itemLayout="horizontal"
         dataSource={workout.data.questions}
-        renderItem={(workout) => (
+        renderItem={(data) => (
           <List.Item>
             <List.Item.Meta
-              title={workout.title}
+              title={data.title}
               description={
                 <List
                   itemLayout="horizontal"
-                  dataSource={workout.exercises}
+                  dataSource={data.exercises}
                   renderItem={(exercise) => (
                     <List.Item>
                       <List.Item.Meta
                         avatar={<Avatar size={60} src={exercise.photo} />}
                         title={exercise.title}
+                        style={
+                          workout.allTimers[exercise.id] === 0
+                            ? { border: '1px solid green' }
+                            : { border: '' }
+                        }
                         description={exercise.duration + ' sec'}
                       />
                     </List.Item>

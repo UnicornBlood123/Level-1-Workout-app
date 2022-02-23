@@ -1,3 +1,22 @@
+#[Task](https://docs.google.com/document/d/1Q_rP2rMNaK0oaT6RcjggMxDDgW-bHhP3nh-41ibaK2o/edit#)
+
+General folder architecture in the application:
+
+```bash
+src
++---modules
+|   +---particular-module
+|   |   +---constants
+|   |   +---components
+|   |   +---store
+|   |   \---*
+|   |           index.css
+|   |           index.ts
+```
+
+
+The application uses a library to manage the state of mobX. Styling libraries: antd and styled components.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -44,3 +63,6 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+
+[]: https://docs.google.com/document/d/1Q_rP2rMNaK0oaT6RcjggMxDDgW-bHhP3nh-41ibaK2o/edit#

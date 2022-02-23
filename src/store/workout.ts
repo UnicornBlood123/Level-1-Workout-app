@@ -28,6 +28,7 @@ class Workout {
 
   allTimers: { [key: number]: number } = {};
 
+  _isWorkoutStart = false;
   _isWorkoutDone = false;
   _isExerciseDone = false;
   _questionId = 0;
@@ -105,6 +106,14 @@ class Workout {
 
   get isWorkoutDone() {
     return this._isWorkoutDone;
+  }
+
+  setIsWorkoutStart = (bool: boolean) => {
+    this._isWorkoutStart = bool;
+  };
+
+  get isWorkoutStart() {
+    return this._isWorkoutStart;
   }
 
   setPrevHidden = (bool: boolean) => {
