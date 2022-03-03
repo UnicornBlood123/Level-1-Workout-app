@@ -1,30 +1,18 @@
 import React from 'react';
-import 'antd/dist/antd.min.css';
 import { observer } from 'mobx-react-lite';
-import { Avatar, Button, List, Image } from 'antd';
+import { Avatar, List, Image } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { Paths } from '../../contents/routes';
 import { useStore } from '../../index';
-import styled from 'styled-components';
+import * as S from './WorkoutList.styles';
 
 const WorkoutList = observer(() => {
   const workout = useStore();
   const navigate = useNavigate();
 
-  const StyledButton = styled(Button)`
-    width: 100%;
-    position: sticky;
-    top: 95%;
-    left: 0;
-    z-index: 999;
-    background-color: #aa00ff;
-    color: white;
-    border-radius: 8px;
-  `;
-
   return (
     <>
-      <StyledButton
+      <S.StyledButton
         onClick={() => {
           workout.setIsWorkoutStart(true);
           if (workout.isWorkoutDone) navigate(Paths.COMPLETE);
@@ -32,7 +20,7 @@ const WorkoutList = observer(() => {
         }}
       >
         {workout.isWorkoutStart ? 'Resume' : 'Start Workout'}
-      </StyledButton>
+      </S.StyledButton>
       <Image
         preview={false}
         width={'100%'}

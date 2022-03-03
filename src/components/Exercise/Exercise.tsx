@@ -1,19 +1,11 @@
 import React, { useEffect } from 'react';
-import 'antd/dist/antd.min.css';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Button, Progress } from 'antd';
-import './Exercise.css';
-import {
-  ArrowLeftOutlined,
-  PauseCircleFilled,
-  PlayCircleFilled,
-  StepBackwardOutlined,
-  StepForwardOutlined,
-} from '@ant-design/icons/lib';
 import { Paths } from '../../contents/routes';
 import { observer } from 'mobx-react-lite';
 import { useStore } from '../../index';
-import styled from 'styled-components';
+import * as S from './Exercise.styles';
+import { Button } from 'antd';
+import { ArrowLeftOutlined } from '@ant-design/icons/lib';
 
 const Exercise = () => {
   const workout = useStore();
@@ -189,66 +181,12 @@ const Exercise = () => {
     }
   }, [workout.isWorkoutDone, workout.isPlay, navigate]);
 
-  const SkipButton = styled(Button)`
-    width: 70px;
-    height: 45px;
-    padding: auto;
-    border-radius: 8px;
-    border-color: #aa00ff;
-  `;
-
-  const ReadyProgress = styled(Progress)`
-    &.ant-progress-circle .ant-progress-text {
-      color: #1de9b6;
-    }
-    &.ant-progress-circle.ant-progress-status-success .ant-progress-text {
-      color: #1de9b6;
-    }
-  `;
-
-  const TimerProgress = styled(Progress)`
-    &.ant-progress-circle .ant-progress-text {
-      color: #ff4081;
-    }
-    &.ant-progress-circle.ant-progress-status-success .ant-progress-text {
-      color: #1de9b6;
-    }
-  `;
-
-  const PlayButton = styled(Button)`
-    width: 50px;
-    height: 50px;
-    padding: 0;
-    margin: 0;
-    background-color: '';
-  `;
-
-  const StepBackwardOutlinedStyled = styled(StepBackwardOutlined)`
-    font-size: 20px;
-    color: #aa00ff;
-  `;
-
-  const StepForwardOutlinedStyled = styled(StepForwardOutlined)`
-    font-size: 20px;
-    color: #aa00ff;
-  `;
-
-  const PlayCircleFilledStyled = styled(PlayCircleFilled)`
-    font-size: 48px;
-    color: #aa00ff;
-  `;
-
-  const PauseCircleFilledStyled = styled(PauseCircleFilled)`
-    font-size: 48px;
-    color: #aa00ff;
-  `;
-
   return (
     <>
       {workout.isWorkoutDone ? (
         navigate(Paths.COMPLETE)
       ) : (
-        <div className={'exercise'}>
+        <S.ExerciseStyled>
           <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(Paths.ROOT)} />
           {workout.isReady ? (
             <h1>
@@ -261,16 +199,16 @@ const Exercise = () => {
           ) : (
             <h1>Get Ready</h1>
           )}
-          <div className={'menu-exercise'}>
-            <SkipButton
+          <S.MenuExerciseStyled>
+            <S.SkipButton
               onClick={prevPage}
               color={'#AA00FF'}
               disabled={workout.prevHidden}
-              icon={<StepBackwardOutlinedStyled />}
+              icon={<S.StepBackwardOutlinedStyled />}
             />
             {workout.isReady ? (
               <>
-                <TimerProgress
+                <S.TimerProgress
                   type="circle"
                   status={workout.currentTimer ? 'normal' : 'success'}
                   strokeColor={workout.isExerciseDone ? '#1de9b6' : '#FF4081'}
@@ -289,7 +227,7 @@ const Exercise = () => {
               </>
             ) : (
               <>
-                <ReadyProgress
+                <S.ReadyProgress
                   strokeColor={'#1DE9B6'}
                   type="circle"
                   percent={100 - (workout.readyTimer / 5) * 100}
@@ -297,12 +235,12 @@ const Exercise = () => {
                 />
               </>
             )}
-            <SkipButton
+            <S.SkipButton
               onClick={nextPage}
               disabled={workout.nextHidden}
-              icon={<StepForwardOutlinedStyled />}
+              icon={<S.StepForwardOutlinedStyled />}
             />
-          </div>
+          </S.MenuExerciseStyled>
           <video
             src={
               workout.data.questions[workout.questionId]?.exercises?.find(
@@ -314,15 +252,15 @@ const Exercise = () => {
             loop
             width={'100%'}
           />
-          <div className={'playButton-exercise'}>
-            <PlayButton
+          <S.PlayButtonExercise>
+            <S.PlayButton
               onClick={workout.onClickPlay}
               hidden={!workout.isReady}
               shape={'circle'}
-              icon={workout.isPlay ? <PauseCircleFilledStyled /> : <PlayCircleFilledStyled />}
+              icon={workout.isPlay ? <S.PauseCircleFilledStyled /> : <S.PlayCircleFilledStyled />}
             />
-          </div>
-        </div>
+          </S.PlayButtonExercise>
+        </S.ExerciseStyled>
       )}
     </>
   );
