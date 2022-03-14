@@ -12,7 +12,7 @@ export const LayoutContentStyled = styled.div`
   min-height: 100%;
   padding: 24px;
   margin: auto;
-  background-color: white;
+  background-color: ${({ theme }) => theme.colors.white};
   font-size: 24px;
 `;
 

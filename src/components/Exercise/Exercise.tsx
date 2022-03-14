@@ -6,6 +6,7 @@ import { useStore } from '../../index';
 import * as S from './Exercise.styles';
 import { Button } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons/lib';
+import MenuExercise from '../MenuExercise/MenuExercise';
 
 const Exercise = () => {
   const workout = useStore();
@@ -28,52 +29,6 @@ const Exercise = () => {
       : workout.setNextHidden(false);
   };
 
-  const nextPage = () => {
-    if (
-      workout.data.questions[workout.questionId]?.exercises?.findIndex(
-        (el) => el.id === Number(params?.id)
-      ) ===
-      workout.data.questions[workout.questionId]?.exercises.length - 1
-    ) {
-      workout.setQuestionId(workout.questionId + 1);
-      navigate(Paths.EXERCISE + workout.data.questions[workout.questionId]?.exercises[0]?.id);
-    } else {
-      navigate(
-        Paths.EXERCISE +
-          workout.data.questions[workout.questionId]?.exercises[
-            workout.data.questions[workout.questionId]?.exercises?.findIndex(
-              (el) => el.id === Number(params?.id)
-            ) + 1
-          ].id
-      );
-    }
-  };
-
-  const prevPage = () => {
-    if (
-      workout.data.questions[workout.questionId]?.exercises?.findIndex(
-        (el) => el.id === Number(params?.id)
-      ) === 0
-    ) {
-      workout.setQuestionId(workout.questionId - 1);
-      navigate(
-        Paths.EXERCISE +
-          workout.data.questions[workout.questionId]?.exercises[
-            workout.data.questions[workout.questionId]?.exercises.length - 1
-          ]?.id
-      );
-    } else {
-      navigate(
-        Paths.EXERCISE +
-          workout.data.questions[workout.questionId]?.exercises[
-            workout.data.questions[workout.questionId]?.exercises?.findIndex(
-              (el) => el.id === Number(params?.id)
-            ) - 1
-          ]?.id
-      );
-    }
-  };
-
   const checkWorkoutDone = () => {
     const index = workout.data.questions.findIndex((qu) =>
       qu.exercises.find((ex) => {
@@ -87,8 +42,12 @@ const Exercise = () => {
 
   const playVideo = () => {
     const video = document.querySelector('video');
-    if (workout.isPlay) video?.play();
-    else video?.pause();
+    video?.play();
+  };
+
+  const pauseVideo = () => {
+    const video = document.querySelector('video');
+    video?.pause();
   };
 
   useEffect(() => {
@@ -96,7 +55,8 @@ const Exercise = () => {
   });
 
   useEffect(() => {
-    playVideo();
+    if (workout.isPlay) playVideo();
+    else pauseVideo();
   }, [workout.isPlay]);
 
   useEffect(() => {
@@ -199,48 +159,7 @@ const Exercise = () => {
           ) : (
             <h1>Get Ready</h1>
           )}
-          <S.MenuExerciseStyled>
-            <S.SkipButton
-              onClick={prevPage}
-              color={'#AA00FF'}
-              disabled={workout.prevHidden}
-              icon={<S.StepBackwardOutlinedStyled />}
-            />
-            {workout.isReady ? (
-              <>
-                <S.TimerProgress
-                  type="circle"
-                  status={workout.currentTimer ? 'normal' : 'success'}
-                  strokeColor={workout.isExerciseDone ? '#1de9b6' : '#FF4081'}
-                  percent={
-                    100 -
-                    (workout.currentTimer /
-                      (workout.data.questions[workout.questionId]?.exercises?.find(
-                        (el) => el.id === Number(params?.id)
-                      )?.duration ?? 1)) *
-                      100
-                  }
-                  format={() => {
-                    return workout.currentTimer;
-                  }}
-                />
-              </>
-            ) : (
-              <>
-                <S.ReadyProgress
-                  strokeColor={'#1DE9B6'}
-                  type="circle"
-                  percent={100 - (workout.readyTimer / 5) * 100}
-                  format={() => workout.readyTimer}
-                />
-              </>
-            )}
-            <S.SkipButton
-              onClick={nextPage}
-              disabled={workout.nextHidden}
-              icon={<S.StepForwardOutlinedStyled />}
-            />
-          </S.MenuExerciseStyled>
+          <MenuExercise />
           <video
             src={
               workout.data.questions[workout.questionId]?.exercises?.find(

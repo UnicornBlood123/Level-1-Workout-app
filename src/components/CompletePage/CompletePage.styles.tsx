@@ -3,13 +3,13 @@ import { CheckOutlined } from '@ant-design/icons/lib';
 import { Button } from 'antd';
 
 export const CheckOutlinedStyled = styled(CheckOutlined)`
-  color: #1de9b6;
+  color: ${({ theme }) => theme.colors.green};
   font-size: 70px;
 `;
 export const ButtonStyled = styled(Button)`
   width: 100%;
-  background-color: #aa00ff;
-  color: white;
+  background-color: ${({ theme }) => theme.colors.purple};
+  color: ${({ theme }) => theme.colors.white};
   border-radius: 8px;
 `;
 

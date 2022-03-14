@@ -8,7 +8,7 @@ export const StyledButton = styled(Button)`
   top: 95%;
   left: 0;
   z-index: 999;
-  background-color: #aa00ff;
-  color: white;
+  background-color: ${({ theme }) => theme.colors.purple};
+  color: ${({ theme }) => theme.colors.white};
   border-radius: 8px;
 `;
