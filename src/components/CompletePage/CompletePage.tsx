@@ -1,4 +1,4 @@
-import { Paths } from '../../contents/routes';
+import { Paths } from '../App/App.routes';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../../index';

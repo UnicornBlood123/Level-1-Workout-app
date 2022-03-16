@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Paths } from '../../contents/routes';
+import { Paths } from '../App/App.routes';
 import { observer } from 'mobx-react-lite';
 import { useStore } from '../../index';
 import { theme } from '../../theme/theme';

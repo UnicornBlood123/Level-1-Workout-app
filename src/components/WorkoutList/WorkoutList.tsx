@@ -2,7 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { Avatar, List } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { Paths } from '../../contents/routes';
+import { Paths } from '../App/App.routes';
 import { useStore } from '../../index';
 import * as S from './WorkoutList.styles';
 import { Question } from '../../store/workout';

@@ -2,7 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import WorkoutList from '../WorkoutList/WorkoutList';
 import { Route, Routes } from 'react-router';
-import { Paths } from '../../contents/routes';
+import { Paths } from './App.routes';
 import CompletePage from '../CompletePage/CompletePage';
 import Exercise from '../Exercise/Exercise';
 import * as S from './App.styles';
