@@ -22,7 +22,6 @@ export const PlayButton = styled(Button)`
   height: 50px;
   padding: 0;
   margin: 0;
-  background-color: '';
 `;
 
 export const PlayCircleFilledStyled = styled(PlayCircleFilled)`
@@ -33,4 +32,8 @@ export const PlayCircleFilledStyled = styled(PlayCircleFilled)`
 export const PauseCircleFilledStyled = styled(PauseCircleFilled)`
   font-size: 48px;
   color: ${({ theme }) => theme.colors.purple};
+`;
+
+export const Video = styled.video`
+  width: 100%;
 `;

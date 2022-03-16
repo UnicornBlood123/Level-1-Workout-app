@@ -14,19 +14,21 @@ const Exercise = () => {
   const navigate = useNavigate();
 
   const checkBorderArray = () => {
-    !workout.data.questions[workout.questionId]?.exercises?.findIndex(
-      (el) => el.id === Number(params?.id)
-    ) && !workout.questionId
-      ? workout.setPrevHidden(true)
-      : workout.setPrevHidden(false);
+    if (workout.questionId < workout.data.questions.length) {
+      !workout.data.questions[workout.questionId]?.exercises?.findIndex(
+        (el) => el.id === Number(params?.id)
+      ) && !workout.questionId
+        ? workout.setPrevHidden(true)
+        : workout.setPrevHidden(false);
 
-    workout.data.questions[workout.questionId]?.exercises?.findIndex(
-      (el) => el.id === Number(params?.id)
-    ) ===
-      workout.data.questions[workout.questionId]?.exercises.length - 1 &&
-    workout.questionId === workout.data.questions.length - 1
-      ? workout.setNextHidden(true)
-      : workout.setNextHidden(false);
+      workout.data.questions[workout.questionId]?.exercises?.findIndex(
+        (el) => el.id === Number(params?.id)
+      ) ===
+        workout.data.questions[workout.questionId]?.exercises.length - 1 &&
+      workout.questionId === workout.data.questions.length - 1
+        ? workout.setNextHidden(true)
+        : workout.setNextHidden(false);
+    }
   };
 
   const checkWorkoutDone = () => {
@@ -37,17 +39,56 @@ const Exercise = () => {
         }
       })
     );
-    if (index === -1) workout.setIsWorkoutDone(true);
+    if (index === -1) {
+      workout.setIsWorkoutDone(true);
+    }
+  };
+
+  const currentTimer = () => {
+    const interval = setInterval(() => {
+      if (workout.isExerciseDone || !workout.isPlay) {
+        clearInterval(interval);
+        if (!workout.currentTimer) workout.setIsExerciseDone(true);
+      } else {
+        workout.decreaseExerciseTimer();
+      }
+      workout.allTimers[workout.exerciseId] = workout.currentTimer;
+    }, 1000);
+    return interval;
+  };
+
+  const readyTimer = () => {
+    const interval = setInterval(() => {
+      if (workout.isReady) {
+        clearInterval(interval);
+      } else {
+        workout.decreaseReadyTimer();
+      }
+    }, 1000);
+    return interval;
+  };
+
+  const workoutTimer = () => {
+    const interval = setInterval(() => {
+      if (workout.isExerciseDone || !workout.isPlay || workout.isWorkoutDone) {
+        clearInterval(interval);
+      } else {
+        workout.increaseTime();
+      }
+    }, 1000);
+    return interval;
+  };
+
+  const navigateRoot = () => {
+    navigate(Paths.ROOT);
   };
 
   const playVideo = () => {
-    const video = document.querySelector('video');
-    video?.play();
+    document.querySelector('video')?.play();
   };
 
   const pauseVideo = () => {
-    const video = document.querySelector('video');
-    video?.pause();
+    document.querySelector('video')?.pause();
   };
 
   useEffect(() => {
@@ -55,8 +96,11 @@ const Exercise = () => {
   });
 
   useEffect(() => {
-    if (workout.isPlay) playVideo();
-    else pauseVideo();
+    if (workout.isPlay) {
+      playVideo();
+    } else {
+      pauseVideo();
+    }
   }, [workout.isPlay]);
 
   useEffect(() => {
@@ -72,7 +116,9 @@ const Exercise = () => {
         )
       );
     }
-    if (workout.questionId === -1) navigate(Paths.ROOT);
+    if (workout.questionId === -1) {
+      navigate(Paths.ROOT);
+    }
     checkBorderArray();
     if (workout.allTimers[workout.exerciseId] === undefined) {
       workout.setCurrentTimer(
@@ -81,7 +127,9 @@ const Exercise = () => {
         )?.duration ?? 0
       );
     } else {
-      if (params?.id) workout.setCurrentTimer(workout.allTimers[workout.exerciseId]);
+      if (params?.id) {
+        workout.setCurrentTimer(workout.allTimers[workout.exerciseId]);
+      }
     }
     if (workout.currentTimer) {
       workout.setIsExerciseDone(false);
@@ -97,26 +145,12 @@ const Exercise = () => {
   useEffect(() => {
     if (!workout.isExerciseDone) {
       if (workout.isReady) {
-        const interval = setInterval(() => {
-          if (workout.isExerciseDone || !workout.isPlay) {
-            clearInterval(interval);
-            if (!workout.currentTimer) workout.setIsExerciseDone(true);
-          } else {
-            workout.decreaseExerciseTimer();
-          }
-          workout.allTimers[workout.exerciseId] = workout.currentTimer;
-        }, 1000);
+        const interval = currentTimer();
         return () => {
           clearInterval(interval);
         };
       } else {
-        const readyInterval = setInterval(() => {
-          if (workout.isReady) {
-            clearInterval(readyInterval);
-          } else {
-            workout.decreaseReadyTimer();
-          }
-        }, 1000);
+        const readyInterval = readyTimer();
         return () => {
           clearInterval(readyInterval);
         };
@@ -127,15 +161,9 @@ const Exercise = () => {
   useEffect(() => {
     if (!workout.isExerciseDone) {
       if (workout.isPlay) {
-        const interval = setInterval(() => {
-          if (workout.isExerciseDone || !workout.isPlay || workout.isWorkoutDone) {
-            clearInterval(interval);
-          } else {
-            workout.increaseTime();
-          }
-        }, 1000);
+        const workoutInterval = workoutTimer();
         return () => {
-          clearInterval(interval);
+          clearInterval(workoutInterval);
         };
       }
     }
@@ -147,7 +175,7 @@ const Exercise = () => {
         navigate(Paths.COMPLETE)
       ) : (
         <S.ExerciseStyled>
-          <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(Paths.ROOT)} />
+          <Button icon={<ArrowLeftOutlined />} onClick={navigateRoot} />
           {workout.isReady ? (
             <h1>
               {
@@ -160,7 +188,7 @@ const Exercise = () => {
             <h1>Get Ready</h1>
           )}
           <MenuExercise />
-          <video
+          <S.Video
             src={
               workout.data.questions[workout.questionId]?.exercises?.find(
                 (el) => el.id === Number(params?.id)
@@ -169,7 +197,6 @@ const Exercise = () => {
             muted={true}
             autoPlay
             loop
-            width={'100%'}
           />
           <S.PlayButtonExercise>
             <S.PlayButton

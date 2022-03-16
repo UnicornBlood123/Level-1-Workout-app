@@ -4,22 +4,24 @@ configure({
   enforceActions: 'never',
 });
 
+export interface Question {
+  title: string;
+  exercises: {
+    description: string;
+    duration: number;
+    id: number;
+    photo: string;
+    title: string;
+    video: string;
+  }[];
+  muscle_group: { name: string; photo: string };
+}
+
 class Workout {
   data: {
     name: string;
     slug: string;
-    questions: {
-      title: string;
-      exercises: {
-        description: string;
-        duration: number;
-        id: number;
-        photo: string;
-        title: string;
-        video: string;
-      }[];
-      muscle_group: { name: string; photo: string };
-    }[];
+    questions: Question[];
   } = {
     name: '',
     slug: '',

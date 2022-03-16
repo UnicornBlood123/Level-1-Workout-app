@@ -71,12 +71,14 @@ const MenuExercise = () => {
             status={workout.currentTimer ? 'normal' : 'success'}
             strokeColor={workout.isExerciseDone ? theme.colors.green : theme.colors.red}
             percent={
-              100 -
-              (workout.currentTimer /
-                (workout.data.questions[workout.questionId]?.exercises?.find(
-                  (el) => el.id === Number(params?.id)
-                )?.duration ?? 1)) *
-                100
+              workout.questionId < workout.data.questions.length
+                ? 100 -
+                  (workout.currentTimer /
+                    (workout.data.questions[workout.questionId]?.exercises?.find(
+                      (el) => el.id === Number(params?.id)
+                    )?.duration ?? 1)) *
+                    100
+                : 0
             }
             format={() => {
               return workout.currentTimer;
